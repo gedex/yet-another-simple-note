@@ -1,5 +1,5 @@
-Simple Note
-===========
+Yet Another Simple Note
+=======================
 
 Yet another Martini-powered RESTful API with Backbone-powered client consuming
 the API.
