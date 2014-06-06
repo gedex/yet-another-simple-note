@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"net/http"
 	"strconv"
 
@@ -9,8 +10,40 @@ import (
 )
 
 // GetNotesCollection returns the list of notes.
-func GetNotesCollection(c Collection, r render.Render) {
-	notes := c.GetAll()
+func GetNotesCollection(c Collection, req *http.Request, r render.Render) {
+
+	fetcher := &NotesFetcherParams{}
+	if v := req.URL.Query().Get("tag_id"); v != "" {
+		id, _ := strconv.Atoi(v)
+		fetcher.Tag = tags.GetTagById(id)
+	} else {
+		fetcher = nil
+	}
+
+	notes := c.GetAll(fetcher)
+	if notes == nil {
+		r.JSON(http.StatusOK, []interface{}{}) // Returns as '[]'.
+	} else {
+		r.JSON(http.StatusOK, notes)
+	}
+}
+
+// GetNotesCollectionByTagId returns the list of notes that's tagged with particular
+// tag (specified by tag id).
+func GetNotesCollectionByTagId(c Collection, params martini.Params, r render.Render) {
+
+	fetcher := &NotesFetcherParams{}
+	if v, ok := params["id"]; ok {
+		id, _ := strconv.Atoi(v)
+		fetcher.Tag = tags.GetTagById(id)
+	}
+
+	if fetcher.Tag == nil {
+		r.JSON(http.StatusOK, []interface{}{}) // Returns as '[]'.
+		return
+	}
+
+	notes := c.GetAll(fetcher)
 	if notes == nil {
 		r.JSON(http.StatusOK, []interface{}{}) // Returns as '[]'.
 	} else {
@@ -88,10 +121,12 @@ func DeleteNote(c Collection, params martini.Params, r render.Render) {
 
 // getSubmittedData returns note submitted through 'POST' or 'PUT'.
 func getSubmittedData(r *http.Request, id int) (*Note, error) {
-	note := &Note{
-		Title:       r.FormValue("title"),
-		Author:      r.FormValue("author"),
-		Description: r.FormValue("description"),
+	decoder := json.NewDecoder(r.Body)
+
+	note := &Note{}
+	err := decoder.Decode(note)
+	if err != nil {
+		return nil, err
 	}
 
 	if r.Method == "PUT" {
@@ -99,4 +134,13 @@ func getSubmittedData(r *http.Request, id int) (*Note, error) {
 	}
 
 	return note, nil
+}
+
+// GetTags returns all tags.
+func GetTags(r render.Render) {
+	if len(tags.m) == 0 {
+		r.JSON(http.StatusOK, []interface{}{}) // Returns as '[]'.
+	} else {
+		r.JSON(http.StatusOK, tags.GetAllTags())
+	}
 }

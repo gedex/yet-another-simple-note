@@ -1,18 +1,17 @@
 define(function(require, exports, module){
 
 	var _ = require("underscore");
+	var FormView = require("views/form");
 	var formTemplate = require("text!templates/form.html");
+	var util = require("views/util");
 
-	var EditView = Backbone.View.extend({
+	var EditView = FormView.extend({
+		className: "edit",
 		tpl: _.template(formTemplate),
 
 		events: {
-			"click button.save": "save"
-		},
-
-		render: function() {
-			this.$el.html(this.tpl(this.model.toJSON()));
-			return this;
+			"click button.save": "save",
+			"click a.delete": "remove"
 		},
 
 		save: function(e) {
@@ -21,10 +20,25 @@ define(function(require, exports, module){
 
 			this.model.set({
 				title: this.$el.find("input[name=title]").val(),
-				author: this.$el.find("input[name=author]").val(),
-				description: this.$el.find("textarea[name=description]").val()
+				content: this.$el.find("textarea[name=content]").val(),
+				tags: util.tags.compose(this.$el.find("input[name=newtag]").val())
 			});
-			window.location.hash = "notes/index";
+
+			if (this.model.isValid()) {
+				this.model.save();
+				this.router.navigate("notes/index", {trigger: true});
+			}
+		},
+
+		remove: function(e) {
+			e.stopPropagation();
+			e.preventDefault();
+
+			this.model.destroy({wait: true});
+			this.model.once("remove", function(){
+				this.$el.remove();
+				this.router.navigate("notes/index", {trigger: true});
+			}, this);
 		}
 	});
 

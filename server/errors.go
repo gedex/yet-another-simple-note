@@ -15,8 +15,7 @@ const (
 var (
 	ErrorNoteDoesNotExists = errors.New("Note does not exists")
 	ErrorEmptyTitle        = errors.New("Title can not be empty")
-	ErrorEmptyAuthor       = errors.New("Author can not be empty")
-	ErrorEmptyDescription  = errors.New("Description can not be empty")
+	ErrorEmptyContent      = errors.New("Content can not be empty")
 )
 
 // map ErrorType to HTTP Status.
@@ -56,6 +55,7 @@ func (ne *NoteError) HasError() bool {
 	return len(ne.errors) > 0
 }
 
+// Errors returns slice of error message in string.
 func (ne *NoteError) Errors() []string {
 	ret := []string{}
 	for _, e := range ne.errors {

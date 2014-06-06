@@ -1,22 +1,21 @@
-ROOTPKG := github.com/gedex/simple-note
-VERSION := 0.1
+.PHONY: server
 
-all: embed build
+all: frontend server
 
-build:
-	go build -o bin/server $(ROOTPKG)/server
+npm:
+	cd public && npm install
 
-embed: rice
-	cd server && rice embed
+grunt:
+	cd public && grunt
 
-deps:
-	go get -u -t -v ./...
+frontend: npm grunt
 
-vendor: godep
-	godep save ./...
+server:
+	cd server && go build -o ../bin/server
 
-godep:
-	go get github.com/tools/godep
+run: server
+	./bin/server
 
-rice:
-	go install github.com/GeertJohan/go.rice/rice
+clean:
+	rm -rf ./bin/server
+	rm -rf ./public/dist

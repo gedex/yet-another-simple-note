@@ -1,0 +1,17 @@
+<!-- Used to create and edit note -->
+<form>
+	<% if (!_.isEmpty(title)) { %>
+	<h2><%- title %></h2>
+	<% } %>
+	<div class="form-group">
+		<input type="text" class="form-control note-title" placeholder="Note title..." name="title" value="<%- title %>">
+	</div>
+	<div class="form-group">
+		<textarea class="form-control note-content" rows="5" name="content" placeholder="Put note content here..."><%- content %></textarea>
+	</div>
+	<div class="form-group">
+		<input type="text" class="form-control newtag" name="newtag" placeholder="Tags separated by commas...">
+	</div>
+	<button class="save btn btn-blue" type="submit">Save</button>
+	<a href="#notes/index" class="btn">Cancel</a>
+</form>

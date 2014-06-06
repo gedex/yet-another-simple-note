@@ -1,0 +1,6 @@
+<% if (!_.isUndefined(tag) && !_.isEmpty(tag)) { %>
+	<p class="filter-info">
+		Notes tagged with <strong><%- tag.name %></strong>.
+	</p>
+	<a href="#notes/index" class="back-to-index">Remove filter</a>
+<% } %>

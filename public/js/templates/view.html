@@ -1,13 +1,14 @@
-<ol class="breadcrumb">
-	<li>
-		<a href="#notes/index">All notes</a>
-	</li>
-	<li class="active">View Note</li>
-</ol>
+<h1 class="note-title"><span><%- title %></span></h1>
 
-<h2>
-	<%= title %>
-	<small>by: <%= author %></small>
-</h2>
-<p><%= description %></p>
-<a class="btn" href="#note/<%= id %>/edit">Edit</a>
+<% if (!_.isEmpty(tags)) { %>
+	<div class="tags-list">
+	<% _.each(tags, function(tag) { %>
+		<a href="#notes/tag/<%- tag.id %>" class="tag-label"><%- tag.name %></a>
+	<% }); %>
+	</div>
+<% } %>
+
+<div class="md-content"><%= content_html %></div>
+
+<a class="btn btn-blue" href="#note/<%- id %>/edit">Edit</a>
+<a href="#notes/index" class="btn">All Notes</a>

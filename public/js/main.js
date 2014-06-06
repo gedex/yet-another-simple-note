@@ -3,7 +3,7 @@ define("run", function(require){
 	var Router = require("router");
 	var router = new Router();
 
-	Backbone.history.start();
+	Backbone.history.start({pustState: true});
 });
 
 require(["config"], function(){

@@ -5,7 +5,29 @@ define(function(require, exports, module) {
 
 	var NotesCollection = Backbone.Collection.extend({
 		model: NoteModel,
-		url: '/api/v1/books'
+		baseUrl: '/api/v1',
+
+		initialize: function() {
+			this.setDefaultUrl();
+		},
+
+		setDefaultUrl: function() {
+			this.url = this.baseUrl + '/notes';
+		},
+
+		getDefaultUrl: function() {
+			return this.baseUrl + '/notes';
+		},
+
+		// Must be called before fetch
+		filterByTag: function(tagId) {
+			this.url = this.baseUrl + '/notes/tag/' + tagId;
+		},
+
+		removeFilter: function() {
+			this.setDefaultUrl();
+		}
+
 	});
 
 	module.exports = NotesCollection;

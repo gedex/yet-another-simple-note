@@ -5,6 +5,7 @@ define(function(require, exports, module){
 	var rowTemplate = require("text!templates/row.html");
 	var RowView = Backbone.View.extend({
 		tagName: "tr",
+		className: "row-note",
 
 		tpl: _.template( rowTemplate ),
 
@@ -17,8 +18,11 @@ define(function(require, exports, module){
 			return this;
 		},
 
-		remove: function() {
-			this.collection.remove(this.model);
+		remove: function(e) {
+			e.stopPropagation();
+			e.preventDefault();
+
+			this.model.destroy({wait: true});
 			this.$el.remove();
 		}
 	});

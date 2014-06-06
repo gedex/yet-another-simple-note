@@ -1,8 +1,14 @@
-<td>
-	<a href="#note/<%= id %>/view"><%= title %></a>
+<td valign="top">
+	<a href="#note/<%- id %>/view" class="note-list-item">
+		<span class="note-title truncated"><%- title %></span>
+		<span class="note-content truncated"><%- content %></span>
+	</a>
 </td>
-<td><%= author %></td>
-<td><%= description %></td>
-<td>
-	<a href="#" class="delete btn">delete</a>
+<td valign="top">
+	<% _.each(tags, function( tag ) { %>
+		<a href="#notes/tag/<%- tag.id %>" class="tag-label"><%- tag.name %></a>
+	<% }); %>
+</td>
+<td valign="top" align="right">
+	<a href="#" class="delete btn btn-red"><span class="genericon genericon-close"></span></a>
 </td>

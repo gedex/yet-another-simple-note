@@ -1,0 +1,14 @@
+<td valign="top">
+	<a href="#note/<%- id %>/view" class="note-list-item">
+		<span class="note-title truncated"><%- title %></span>
+		<span class="note-content truncated"><%- content %></span>
+	</a>
+</td>
+<td valign="top">
+	<% _.each(tags, function( tag ) { %>
+		<a href="#notes/index?tag_id=<%- tag.id %>" class="tag-label"><%- tag.name %></a>
+	<% }); %>
+</td>
+<td valign="top" align="right">
+	<a href="#" class="delete btn btn-red"><span class="genericon genericon-close"></span></a>
+</td>
