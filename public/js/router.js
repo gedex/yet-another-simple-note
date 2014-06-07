@@ -5,6 +5,7 @@ define(function(require, exports, module){
 
 	var NotesCollection = require("collections/notes");
 	var NoteModel = require("models/note");
+	var TagsCollection = require("collections/tags");
 
 	var IndexView = require("views/index");
 	var SingleView = require("views/view");
@@ -27,12 +28,14 @@ define(function(require, exports, module){
 
 		initialize: function() {
 			this.collection = new NotesCollection();
+			this.tags = new TagsCollection();
 		},
 
 		// Listing all notes and used as default route.
 		index: function() {
 			var indexView = new IndexView({
-				collection: this.collection
+				collection: this.collection,
+				tags: this.tags
 			});
 			$('#main').html(indexView.render().el);
 		},
@@ -41,6 +44,7 @@ define(function(require, exports, module){
 		indexByTag: function(tagId) {
 			var indexView = new IndexView({
 				collection: this.collection,
+				tags: this.tags,
 				tagId: tagId
 			});
 			$('#main').html(indexView.render().el);

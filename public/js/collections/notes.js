@@ -19,6 +19,23 @@ define(function(require, exports, module) {
 			return this.baseUrl + '/notes';
 		},
 
+		search: function(keyword) {
+			keyword = keyword.trim();
+			if (keyword === "") return this.models;
+
+			var pattern = new RegExp(keyword, "gi");
+			var results = this.filter(function(model){
+				if (pattern.test(model.get("title"))) return true;
+				if (pattern.test(model.get("content"))) return true;
+
+				return false;
+			});
+
+			this.trigger("search");
+
+			return results;
+		},
+
 		// Must be called before fetch
 		filterByTag: function(tagId) {
 			this.url = this.baseUrl + '/notes/tag/' + tagId;

@@ -5,6 +5,7 @@ define(function(require, exports, module) {
 
 	var TagsCollection = Backbone.Collection.extend({
 		model: TagModel,
+		url: '/api/v1/tags',
 	});
 
 	module.exports = TagsCollection;

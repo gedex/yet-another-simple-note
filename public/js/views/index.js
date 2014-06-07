@@ -10,47 +10,119 @@ define(function(require, exports, module) {
 	var IndexView = Backbone.View.extend({
 		className: "index",
 		tagId: null,
+		searchKeyword: "",
+		events: {
+			"keyup #search": "search",
+			"keydown #search": "search",
+			"change #search": "search",
+			"click .back-to-index": "resetFilter"
+		},
 
 		initialize: function(options) {
+			this.tags = options.tags;
+
 			if (!_.isEmpty(options.tagId)) {
 				this.tagId = options.tagId;
 				this.collection.filterByTag(this.tagId);
 			} else {
 				this.removeFilter();
 			}
+
+			this.tags.fetch({reset: true});
 			this.collection.fetch({reset: true});
 
 			this.listenTo(this.collection, "sync", this.render);
 			this.listenTo(this.collection, "remove", this.render);
+			this.listenTo(this.collection, "search", this.renderSearchResults);
+		},
+
+		search: function() {
+			this.searchKeyword = $("#search").val().trim();
+			this.searchResults = this.collection.search(this.searchKeyword);
+		},
+
+		resetFilter: function() {
+			this.searchKeyword = "";
+			this.tagId = null;
+
+			this.collection.fetch({reset: true});
 		},
 
 		render: function() {
-			this.$el.html( indexTemplate );
-			this.$el.find(".well").append(searchForm);
-
-			if (!_.isNull(this.tagId)) {
-				var tagId = parseInt(this.tagId, 10);
-				var target = this.$el.find(".well");
-				$.get("/api/v1/tags", function(resp) {
-
-					var tag = _.findWhere(resp, {id: tagId});
-					if (!_.isUndefined(tag)) {
-						var filterInfo = _.template(filterTemplate)({tag: tag});
-						target.append(filterInfo);
-					}
-				});
-			}
-
-			if (_.isEmpty(this.collection.models)) {
-				$(this.el).find("tbody").html(emptyRowTemplate);
-			} else {
-				_.each(this.collection.models, $.proxy(this, 'renderRow'));
-			}
+			this._renderLayout();
+			this._renderSetProperties();
+			this._renderSearchForm();
+			this._renderFilterInfo();
+			this._renderTable();
 
 			return this;
 		},
 
-		renderRow: function(model) {
+		renderSearchResults: function() {
+			this._renderSetProperties();
+			this._renderFilterInfo();
+
+			this._removeTable();
+			this._renderTable(this.searchResults);
+		},
+
+		_renderLayout: function() {
+			this.$el.html( indexTemplate );
+		},
+
+		_renderSetProperties: function() {
+			// Sets propeties for subsequence sections.
+			this.topSection = this.$el.find(".well");
+			this.searchContainer = this.topSection.find("#search-container");
+			this.filterContainer = this.topSection.find("#filter-container");
+			this.filterTemplate = _.template(filterTemplate);
+			this.filterContent = "";
+			this.topSectionVars = {
+				"tag"    : null,
+				"keyword": this.searchKeyword
+			};
+		},
+
+		_renderSearchForm: function() {
+			this.searchContainer.html(_.template(searchForm)(this.topSectionVars));
+		},
+
+		_renderFilterInfo: function() {
+			if (!_.isNull(this.tagId)) {
+				var _tagId = parseInt(this.tagId, 10);
+				var _tag = this.tags.findWhere({id: _tagId});
+
+				if (!_.isUndefined(_tag) && !_.isUndefined(_tag.toJSON)) {
+					this.topSectionVars.tag = _tag.toJSON();
+				}
+			}
+
+			this.filterContent = this.filterTemplate(this.topSectionVars);
+			this.filterContainer.html(this.filterContent);
+		},
+
+		_renderTable: function(collection) {
+			if (_.isUndefined(collection)) {
+				collection = this.collection.models;
+			}
+			console.log(collection);
+
+			if (_.isEmpty(collection)) {
+				$(this.el).find("tbody").html(emptyRowTemplate);
+			} else {
+				_.each(collection, $.proxy(this, '_renderRow'));
+			}
+		},
+
+		_removeTable: function() {
+			if (!_.isEmpty(this.collection.models)) {
+				// This causes mem leaks.
+				// @todo a better way to cleanup rows.
+				$(this.el).find("tbody").html("");
+			}
+		},
+
+		_renderRow: function(model) {
 			var tags = model.get("tags");
 
 			if (!_.isUndefined(tags) && !_.isUndefined(tags.toJSON)) {
@@ -60,7 +132,6 @@ define(function(require, exports, module) {
 			}
 
 			var row = new RowView({
-				collection: this.collection,
 				model: model
 			});
 			$(this.el).find("tbody").append(row.render().el);

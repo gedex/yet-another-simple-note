@@ -1,6 +1,17 @@
-<% if (!_.isUndefined(tag) && !_.isEmpty(tag)) { %>
-	<p class="filter-info">
-		Notes tagged with <strong><%- tag.name %></strong>.
-	</p>
+<p class="filter-info">
+<% if (!_.isEmpty(tag)) { %>
+	Notes tagged with <strong><%- tag.name %></strong>
+<% } %>
+<% if (!_.isEmpty(keyword)) { %>
+	<% if (!_.isEmpty(tag)) { %>
+		and contains keyword <strong><%- keyword %></strong>.
+	<% } else { %>
+		Notes with keyword <strong><%- keyword %></strong>.
+	<% } %>
+<% } %>
+</p>
+
+<% if (!_.isEmpty(tag) || !_.isEmpty(keyword)) { %>
 	<a href="#notes/index" class="back-to-index">Remove filter</a>
 <% } %>
+
