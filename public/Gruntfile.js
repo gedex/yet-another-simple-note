@@ -46,7 +46,8 @@ module.exports = function(grunt) {
 					{ src: ["css/font/*"], dest: "dist/" }
 				]
 			}
-		}
+		},
+
 	});
 
 	grunt.loadNpmTasks("grunt-contrib-clean");

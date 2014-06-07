@@ -6,7 +6,7 @@
 </td>
 <td valign="top">
 	<% _.each(tags, function( tag ) { %>
-		<a href="#notes/index?tag_id=<%- tag.id %>" class="tag-label"><%- tag.name %></a>
+		<a href="#notes/tag/<%- tag.id %>" class="tag-label"><%- tag.name %></a>
 	<% }); %>
 </td>
 <td valign="top" align="right">

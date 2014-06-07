@@ -24,6 +24,7 @@ define(function(require, exports, module) {
 
 			return resp;
 		}
+
 	});
 
 	module.exports = NestedModel;

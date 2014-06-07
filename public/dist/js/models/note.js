@@ -15,6 +15,13 @@ define(function(require, exports, module) {
 			tags: TagsCollection
 		},
 
+		initialize: function() {
+			// To prevents wrong URL construction during filter.
+			if (!_.isUndefined(this.collection) && !_.isUndefined(this.collection.getDefaultUrl)) {
+				this.urlRoot = this.collection.getDefaultUrl();
+			}
+		},
+
 		validate: function(attrs) {
 			var errors = {};
 			if (!attrs.title) errors.title = "Title can not be empty";

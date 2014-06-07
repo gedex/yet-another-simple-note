@@ -100,7 +100,7 @@ define(function(require, exports, module){
 			if (_.isUndefined(this.currentModel)) {
 				tpl = viewEmpty;
 			} else {
-				var view = new this["currentView"]({
+				var view = new this.currentView({
 					model: this.currentModel,
 					collection: this.collection,
 					router: this
