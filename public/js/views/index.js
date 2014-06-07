@@ -14,7 +14,6 @@ define(function(require, exports, module) {
 		events: {
 			"keyup #search": "search",
 			"keydown #search": "search",
-			"change #search": "search",
 			"click .back-to-index": "resetFilter"
 		},
 
@@ -25,7 +24,7 @@ define(function(require, exports, module) {
 				this.tagId = options.tagId;
 				this.collection.filterByTag(this.tagId);
 			} else {
-				this.removeFilter();
+				this._removeTagFilter();
 			}
 
 			this.tags.fetch({reset: true});
@@ -37,13 +36,18 @@ define(function(require, exports, module) {
 		},
 
 		search: function() {
-			this.searchKeyword = $("#search").val().trim();
+			this.searchKeyword = $("#search").val();
 			this.searchResults = this.collection.search(this.searchKeyword);
 		},
 
-		resetFilter: function() {
+		resetFilter: function(e) {
+			e.stopPropagation();
+			e.preventDefault();
+
+			$("#search").val("");
 			this.searchKeyword = "";
-			this.tagId = null;
+
+			this._removeTagFilter();
 
 			this.collection.fetch({reset: true});
 		},
@@ -116,9 +120,7 @@ define(function(require, exports, module) {
 
 		_removeTable: function() {
 			if (!_.isEmpty(this.collection.models)) {
-				// This causes mem leaks.
-				// @todo a better way to cleanup rows.
-				$(this.el).find("tbody").html("");
+				$(this.el).find("tbody tr").remove();
 			}
 		},
 
@@ -137,7 +139,7 @@ define(function(require, exports, module) {
 			$(this.el).find("tbody").append(row.render().el);
 		},
 
-		removeFilter: function() {
+		_removeTagFilter: function() {
 			this.collection.removeFilter();
 			this.tagId = null;
 		}

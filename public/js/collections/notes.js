@@ -20,9 +20,6 @@ define(function(require, exports, module) {
 		},
 
 		search: function(keyword) {
-			keyword = keyword.trim();
-			if (keyword === "") return this.models;
-
 			var pattern = new RegExp(keyword, "gi");
 			var results = this.filter(function(model){
 				if (pattern.test(model.get("title"))) return true;
