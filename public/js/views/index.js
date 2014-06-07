@@ -109,7 +109,6 @@ define(function(require, exports, module) {
 			if (_.isUndefined(collection)) {
 				collection = this.collection.models;
 			}
-			console.log(collection);
 
 			if (_.isEmpty(collection)) {
 				$(this.el).find("tbody").html(emptyRowTemplate);
