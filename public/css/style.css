@@ -263,3 +263,6 @@ form .search:focus {
 	text-align: center;
 	font-size: 11px;
 }
+.footer a {
+	text-decoration: none;
+}

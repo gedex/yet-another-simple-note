@@ -2,6 +2,7 @@ package main
 
 import (
 	"sync"
+	"time"
 
 	"github.com/russross/blackfriday"
 )
@@ -72,53 +73,33 @@ var markdownRenderer blackfriday.Renderer
 var markdownRendererExtensions int
 
 func init() {
-	// Set renderer.
-	markdownRenderer = blackfriday.HtmlRenderer(0, "", "")
+	initMarkdownRenderer()
+	initDB()
+	resetDB()
+	resetDBEach(time.Hour)
+}
+
+func initDB() {
+	collection = &NotesCollection{}
+	tags = &TagsCollection{}
+	notesByTag = &NotesByTagsCollection{}
+}
+
+func initMarkdownRenderer() {
+	flags := 0
+	flags |= blackfriday.HTML_SKIP_HTML
+	flags |= blackfriday.HTML_SKIP_STYLE
+	flags |= blackfriday.HTML_SKIP_SCRIPT
+	flags |= blackfriday.HTML_SAFELINK
+
+	markdownRenderer = blackfriday.HtmlRenderer(flags, "", "")
+
 	markdownRendererExtensions |= blackfriday.EXTENSION_NO_INTRA_EMPHASIS
 	markdownRendererExtensions |= blackfriday.EXTENSION_FENCED_CODE
 	markdownRendererExtensions |= blackfriday.EXTENSION_AUTOLINK
 	markdownRendererExtensions |= blackfriday.EXTENSION_STRIKETHROUGH
 	markdownRendererExtensions |= blackfriday.EXTENSION_SPACE_HEADERS
-
-	collection = &NotesCollection{
-		m: make(map[int]*Note),
-	}
-
-	tags = &TagsCollection{
-		m:      make(map[int]*Tag),
-		byName: make(map[string]*Tag),
-	}
-
-	notesByTag = &NotesByTagsCollection{
-		m: make(map[int]notesMapById),
-	}
-
-	tag1 := tags.NewTag("awesome")
-	tag2 := tags.NewTag("note")
-	tag3 := tags.NewTag("example")
-
-	// Fills the collections.
-	collection.Add(&Note{
-		Id:    1,
-		Title: "Example Note #1 With Long Long Title",
-		Content: `This is awesome note #1.
-========================
-
-Lets try with *Markdown*.`,
-		Tags: []*Tag{tag1, tag2, tag3},
-	})
-	collection.Add(&Note{
-		Id:      2,
-		Title:   "Example Note #2",
-		Content: "This is awesome note #2",
-		Tags:    []*Tag{tag1, tag2},
-	})
-	collection.Add(&Note{
-		Id:      3,
-		Title:   "Example Note #3",
-		Content: "This is awesome note #3",
-		Tags:    []*Tag{tag1},
-	})
+	markdownRendererExtensions |= blackfriday.HTML_SKIP_SCRIPT
 }
 
 // GetAll returns Notes collection.
