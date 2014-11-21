@@ -13,7 +13,7 @@ frontend: npm grunt
 deps:
 	go get -t -v ./...
 
-server:
+server: deps
 	cd server && go build -o ../bin/server
 
 run: server
