@@ -10,6 +10,9 @@ grunt:
 
 frontend: npm grunt
 
+deps:
+	go get -t -v ./...
+
 server:
 	cd server && go build -o ../bin/server
 
