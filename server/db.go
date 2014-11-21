@@ -89,7 +89,6 @@ func initMarkdownRenderer() {
 	flags := 0
 	flags |= blackfriday.HTML_SKIP_HTML
 	flags |= blackfriday.HTML_SKIP_STYLE
-	flags |= blackfriday.HTML_SKIP_SCRIPT
 	flags |= blackfriday.HTML_SAFELINK
 
 	markdownRenderer = blackfriday.HtmlRenderer(flags, "", "")
@@ -99,7 +98,6 @@ func initMarkdownRenderer() {
 	markdownRendererExtensions |= blackfriday.EXTENSION_AUTOLINK
 	markdownRendererExtensions |= blackfriday.EXTENSION_STRIKETHROUGH
 	markdownRendererExtensions |= blackfriday.EXTENSION_SPACE_HEADERS
-	markdownRendererExtensions |= blackfriday.HTML_SKIP_SCRIPT
 }
 
 // GetAll returns Notes collection.
